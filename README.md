@@ -9,7 +9,9 @@ but not the bomb. As such, the word "bomb" will be used strictly in the context 
 Strict players may consider this solver to ruin the fun, but in my personal opinion, there
 is no fun to be had with this module. It's extremely difficult for both the defuser and the
 expert, and is partially viewable as a "cruel" version of the _already mind-bending_ "Simon
-Stores" thanks to its usage of mechanics from "The Ultracube". Their manuals are below.
+Stores" thanks to its usage of mechanics from "The Ultracube". With one of its updates, it
+even took a step ABOVE "The Ultracube" with a sixth dimension compared to "The Ultracube"
+having "only" five. Rule seed 1 manuals for "Simon Stores" and "The Ultracube" are below.
 
 https://ktane.timwi.de/HTML/Simon%20Stores.html
 https://ktane.timwi.de/HTML/The%20Ultracube.html
