@@ -1,6 +1,7 @@
 """
 This file contains two dicts of tuples,
 with each tuple containing three lambdas.
+In addition, it has a basic tuple for base-36.
 For the first dict (mono, single rotations),
 the rotation of the 6D cube is the key,
 and the value tuple contains the functions
@@ -17,6 +18,10 @@ results between -364 and 364 inclusive.
 
 :author: mythers45#1807 (Discord username)
 """
+
+b_36 = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B",
+        "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
+        "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z")
 
 """
 MONO: Definitions of single (mono) rotation functions (5 args: x d n a b)
