@@ -123,46 +123,46 @@ mono = {"XY": ((lambda x, d, n, a, b: bound(x + d)),
                (lambda x, d, n, a, b: bound(n * (x - a - b))))}
 
 """
-POLY: Definitions of multiple (poly) rotation functions (8 args: x d n a b r s t)
+POLY: Definitions of multiple (poly) rotation functions (8 args: r s t x d n a b)
 x, d, n, a, and b share the same meanings from the mono dictionary (above)
 r is one of the two or three rotations in the multiple rotation
 s is another of the two or three rotations, like r (order doesn't matter!)
 t is only used if there are three rotations, where it's the third one of the trio
 """
-poly = {"X":  ((lambda x, d, n, a, b, r, s, t: bound(2*d-abs(mono[r][0](x, d, n, a, b)
+poly = {"X":  ((lambda r, s, t, x, d, n, a, b: bound(2*d-abs(mono[r][0](x, d, n, a, b)
                                                              - mono[s][0](x, d, n, a, b)))),
-               (lambda x, d, n, a, b, r, s, t: bound(3*d-abs(mono[r][1](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(3*d-abs(mono[r][1](x, d, n, a, b)
                                                              + mono[s][1](x, d, n, a, b)))),
-               (lambda x, d, n, a, b, r, s, t: bound(4*d-abs(mono[r][2](x, d, n, a, b))
+               (lambda r, s, t, x, d, n, a, b: bound(4*d-abs(mono[r][2](x, d, n, a, b))
                                                      - abs(mono[s][2](x, d, n, a, b))))),
-        "Y":  ((lambda x, d, n, a, b, r, s, t: bound(2*d-mono[r][0](x, d, n, a, b)
+        "Y":  ((lambda r, s, t, x, d, n, a, b: bound(2*d-mono[r][0](x, d, n, a, b)
                                                      - mono[s][0](x, d, n, a, b))),
-               (lambda x, d, n, a, b, r, s, t: bound(2*a-mono[r][1](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(2*a-mono[r][1](x, d, n, a, b)
                                                      - mono[s][1](x, d, n, a, b))),
-               (lambda x, d, n, a, b, r, s, t: bound(2*b-mono[r][2](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(2*b-mono[r][2](x, d, n, a, b)
                                                      - mono[s][2](x, d, n, a, b)))),
-        "Z":  ((lambda x, d, n, a, b, r, s, t: bound(mono[r][0](x, d, n, a, b)
+        "Z":  ((lambda r, s, t, x, d, n, a, b: bound(mono[r][0](x, d, n, a, b)
                                                      + mono[s][0](x, d, n, a, b)-x)),
-               (lambda x, d, n, a, b, r, s, t: bound(mono[r][1](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(mono[r][1](x, d, n, a, b)
                                                      + mono[s][1](x, d, n, a, b)-x-a)),
-               (lambda x, d, n, a, b, r, s, t: bound(mono[r][2](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(mono[r][2](x, d, n, a, b)
                                                      + mono[s][2](x, d, n, a, b)-x-b-a))),
-        "W":  ((lambda x, d, n, a, b, r, s, t: bound(max(mono[r][0](x, d, n, a, b),
+        "W":  ((lambda r, s, t, x, d, n, a, b: bound(max(mono[r][0](x, d, n, a, b),
                                                          mono[s][0](x, d, n, a, b),
                                                          mono[t][0](x, d, n, a, b))-2*d)),
-               (lambda x, d, n, a, b, r, s, t: bound(mono[r][1](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(mono[r][1](x, d, n, a, b)
                                                      + mono[s][1](x, d, n, a, b)
                                                      + mono[t][1](x, d, n, a, b)-2*x)),
-               (lambda x, d, n, a, b, r, s, t: bound(mono[r][2](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(mono[r][2](x, d, n, a, b)
                                                      + mono[s][2](x, d, n, a, b)
                                                      + mono[t][2](x, d, n, a, b)-a-b-x))),
-        "V":  ((lambda x, d, n, a, b, r, s, t: bound(min(mono[r][0](x, d, n, a, b),
+        "V":  ((lambda r, s, t, x, d, n, a, b: bound(min(mono[r][0](x, d, n, a, b),
                                                          mono[s][0](x, d, n, a, b),
                                                          mono[t][0](x, d, n, a, b))+2*d)),
-               (lambda x, d, n, a, b, r, s, t: bound(2*x-mono[r][1](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(2*x-mono[r][1](x, d, n, a, b)
                                                      - mono[s][1](x, d, n, a, b)
                                                      - mono[t][1](x, d, n, a, b))),
-               (lambda x, d, n, a, b, r, s, t: bound(a+b+x-mono[r][2](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(a+b+x-mono[r][2](x, d, n, a, b)
                                                      - mono[s][2](x, d, n, a, b)
                                                      - mono[t][2](x, d, n, a, b))))}
 

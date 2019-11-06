@@ -18,6 +18,7 @@ def main() -> None:
     b = [0, 0, 0, 0, 0]  # (a4 always = 0)
     c = [0, 0, 0, 0, 0, 0]
     d = 0
+    stage_list = {0: a, 1: b, 2: c}  # Dict defining each stage's list
 
     ser = list(input("Enter the bomb's serial number: ").upper())
     while len(ser) != 6:  # Gets the serial number (SN), ensuring it's six characters long
@@ -40,15 +41,50 @@ def main() -> None:
     c[0] = (ser[0] * 36 + ser[1]) % 365  # Characters 1 and 2
 
     # Now the program has all required serial number data and can get rotations
-    for STAGE in range(0, 3):  # For each stage of the module...
+    for STAGE in range(0, 3):  # For each of the 3 stages of the mod...
         for n in range(1, STAGE + 4):  # For each rotation...
             # Note on the +4: The first stage has 3 rotations, but that's STAGE = 0, so
             # 3 needs to be added, and the end of range is exclusive, so add 3+1, or 4.
             valid = False  # Stores validity of a given stage's input
+            rots = []  # Variable to store list of sub-rotations
             while not valid:  # Prompt until valid
                 rots = input("Enter rotation number " + str(n) + " of stage " + str(STAGE + 1)
                              + ":\n(separate sub-rotations with spaces): ").upper().split(" ")
                 valid = validate_rots(rots)  # Gets a rotation and tests it for validity
+
+            if len(rots) == 1:  # If there's only 1 rotation, use it to calculate the next value
+                stage_list[STAGE][n] = mono[rots[0]][STAGE](stage_list[STAGE][n-1], d, n, a[n-1], b[n-1])
+            elif len(rots) == 2:  # Otherwise, if there are 2 rotations, check the unused ones
+                axes = ["X", "Y", "Z", "U", "V", "W"]  # List of axes
+                func = ["X", "Y", "Z"]  # List of axes with functions
+                axes.remove(rots[0][0])  # (and axes for function X!)
+                axes.remove(rots[0][1])  # Removes the used axes...
+                axes.remove(rots[1][0])  # To find the two...
+                axes.remove(rots[1][1])  # unused ones.
+                index = 0  # Index of the function
+                for part in axes:  # For each axis not in XYZ, increment the function index
+                    if part not in func:  # (Resulting function: Z if 0 in, Y if 1 in, X if 2 in)
+                        index += 1  # Then calculate the next value without a 3rd rotation...
+
+                stage_list[STAGE][n] = poly[func[index]][STAGE](  # (it's unused in X, Y, and Z anyway)
+                    rots[0], rots[1], None, stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
+            # End of double rotation calculation
+            else:  # Otherwise, there must be 3 rotations, so check if they all have an axis from XYZ
+                # If that's the case, they all must map XYZ to UVW or vice versa, as all six axes are used once
+                func = ["X", "Y", "Z"]  # Stores the X, Y, and Z axes in a list for easy function use
+                form = "W"  # Stores the formula to use, chosen by a test of each sub-rotation
+                for part in rots:  # For each sub-rotation, if neither of the axes is XYZ...
+                    if part[0] not in func and part[1] not in func:  # The test fails...
+                        form = "V"  # So use function V instead of W in calculating
+                        break  # Maybe the world's smallest optimization effort
+                stage_list[STAGE][n] = poly[form][STAGE](  # Uses the result formula of the test
+                    rots[0], rots[1], rots[2], stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
+            # End of triple (and all) rotation calculation
+        # End of rotation (n) loop
+        ans = stage_list[STAGE][STAGE + 3]  # The answer! (+3 similar to +4 in rotation loop)
+        print("Stage " + str(STAGE + 1) + "'s answer is " + str(ans) + "! Now to input it.")
+        print("Press the center button to enter input mode.")
+    # End of stage loop
 
 
 def validate_rots(rots: list) -> bool:
@@ -56,6 +92,7 @@ def validate_rots(rots: list) -> bool:
     Takes a list of sub-rotations comprising one rotation and tests its validity.
     For a rotation to be valid, it must have 1, 2, or 3 sub-rotations, all defined
     in the dictionary of single rotations, without using any axis more than once.
+    :param rots: The rotation (a.k.a. list of sub-rotations) to validate
     :return: The validity of the rotation by the above tests
     """
     valid = True  # Assume valid until tested
