@@ -28,12 +28,11 @@ def order(stage_cols: list, cols: list) -> list:
     if cols[0] == "W":  # If top is white, reverse the sequence.
         stage_cols.reverse()
     if cols[1] == "Y":  # If top-right is yellow, cycle all 1 left.
-        # (All except first element go 1 left, first becomes last)
-        stage_cols = stage_cols[1:].append(stage_cols[0])
+        stage_cols = stage_cols[1:] + [stage_cols[0]]
     if abs(cols.index("W") - cols.index("K")) == 4:  # If white is opposite black...
         for i in range(0, 4):  # Swap each color with its opposite color on the module.
-            if cols[i] != "W" and cols[i] != "K":  # If the color pair isn't W/K, swap it
-                swap(stage_cols, stage_cols[i], stage_cols[i + 4])
+            if cols[i] != "W" and cols[i] != "K":  # For each color pair, if it's not...
+                swap(stage_cols, cols[i], cols[i + 4])  # W/K, then it can be swapped.
     if abs(cols.index("R") - cols.index("C")) == 4:  # If red is opposite cyan...
         swap(stage_cols, "R", "C")  # Swap R and C, G and M, and B and Y.
         swap(stage_cols, "G", "M")

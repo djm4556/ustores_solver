@@ -5,7 +5,7 @@ UltraStores (ktane.timwi.de/HTML/UltraStores.html)
 
 :author: mythers45#1807 (Discord username)
 """
-from sys import argv  # For interface customization?
+# from sys import argv  # For interface customization?
 from src.functions import *  # Helper functions
 from src.colors import order  # Color order
 
@@ -83,16 +83,56 @@ def main() -> None:
             # End of triple (and all) rotation calculation
         # End of rotation (n) loop
         ans_num = stage_list[STAGE][STAGE + 3]  # The answer! (+3 similar to +4 in rotation loop)
-        print("Stage " + str(STAGE + 1) + "'s answer is " + str(ans_num) + "! Now to input it...")
+        # print("Stage " + str(STAGE + 1) + "'s answer is " + str(int(ans_num)) + "! Now to input it...")
         print("Press the center button to reveal eight colors.")  # Prompt for color input
-        cols_valid = False  # Stores validity of the color list while prompting
-        cols = []  # Variable to store a list of all eight colors
-        while not cols_valid:  # Prompt until valid
-            cols = list(input("Enter them in CW order from North, without spaces: ").upper())
-            cols_valid = validate_cols(cols)  # Method below main in this file
-        ans_seq = order(stage_cols[STAGE], cols)  # Reorders initial order
-        print("The order goes " + str(ans_seq) + ", so press...")
-    # End of stage loop
+        if ans_num != 0:  # If the answer is zero, though, it doesn't matter, so skip.
+            cols_valid = False  # Stores validity of the color list while prompting
+            cols = []  # Variable to store a list of all eight colors
+            while not cols_valid:  # Prompt until valid
+                cols = list(input("Enter them in CW order from North, without spaces: ").upper())
+                cols_valid = validate_cols(cols)  # Method below main in this file
+            ans_seq = order(stage_cols[STAGE], cols)  # Reorders initial order
+            # print("The order goes " + str(ans_seq) + ", so press...")
+            answer(ans_num, ans_seq)  # Gets the final answer!
+        else:  # If the answer was 0, say to only press the center.
+            print("The answer is 0, so just press the center button again!")
+        if input("Enter N if a strike occurred, otherwise press enter: ").upper() == "N":
+            print("[STRIKE] Try reading the rotations again.\n[STRIKE] Note: only the colors will change.")
+            STAGE -= 1  # If that wasn't correct, undo the increment of the stage...
+            # So this stage will be re-calculated
+    # End of stage loop and program (except for a solve message)
+    print("[SOLVED] Congratulations on solving UltraStores! -mythers45#1807")
+
+
+def answer(ans_num: int, ans_seq: list) -> None:
+    """
+    Takes the integer calculated from the serial number and 6D rotations,
+    along with the list calculated from the ordering of the button colors,
+    and combines them to form a sequence of button presses for submitting.
+    Entering three of these button sequences correctly will solve the module.
+    :param ans_num: The answer number, as an integer
+    :param ans_seq: The answer color sequence
+    :return: None, but print the answer
+    """
+    tern = []  # List to store balanced ternary for ans_num
+    for i in range(5, -1, -1):  # For each power of 3 from 3^5 down to 3^0...
+        if abs(ans_num - pow(3, i)) < abs(ans_num):  # If subtracting it gets closer to 0...
+            ans_num -= pow(3, i)  # Subtract it, then put a + (W) in balanced ternary
+            tern.insert(0, "W")  # Inserts at index 0 so 3^5 ends last
+        elif abs(ans_num + pow(3, i)) < abs(ans_num):  # Otherwise, if adding it gets closer to 0...
+            ans_num += pow(3, i)  # Subtract it, then put a - (K) in balanced ternary
+            tern.insert(0, "K")  # Inserts at index 0 so 3^5 ends last
+        else:  # Otherwise, leave ans_num as is and put a 0 (0) in balanced ternary
+            tern.insert(0, "0")  # Inserts at index 0 so 3^5 ends last
+    sign = "W"  # Stores the currently selected sign (W or K)
+    ans_str = ""  # Stores the final answer string
+    for i in range(0, 6):  # For each of the buttons...
+        if tern[i] != "0":  # If it has nonzero value...
+            if sign != tern[i]:  # Add and update the new sign if needed
+                ans_str += tern[i]
+                sign = tern[i]  # Update
+            ans_str += ans_seq[i]  # Then add the color to press
+    print("Press " + ans_str + ", then press the center button to submit.")  # PRINTS THE FINAL ANSWER
 
 
 def validate_rots(rots: list) -> bool:
