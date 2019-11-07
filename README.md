@@ -28,6 +28,8 @@ require you to restart the program, losing any data you entered (if you did ente
 After entering a valid serial number, the program will start asking for rotations, which
 must be entered in the order they occur. A pause denotes the end of the rotation sequence,
 meaning the first rotation comes after the pause and the last one comes before the pause.
+Without advanced optical detection, there is no way to automatically detect rotations,
+so it is up to the defuser to figure out which rotations are being used on the module.
 
 **Combined Rotations**
 Sometimes, two or three rotations will happen at once, appearing as one big complex
