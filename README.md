@@ -67,10 +67,17 @@ so the program will reset that stage instead of advancing to the next one by def
 
 # Appendix: Colors and Letters
 Red = R (primary)
+
 Green = G (primary)
+
 Blue = B (primary)
+
 Cyan = C (secondary)
+
 Magenta = M (secondary)
+
 Yellow = Y (secondary)
+
 White = W (neither)
+
 blacK = K (neither)
