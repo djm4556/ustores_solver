@@ -18,7 +18,7 @@ def main() -> None:
     a = [0, 0, 0, 0, 0]  # Storage for A, B, C, D values
     b = [0, 0, 0, 0, 0]  # (a4 always = 0)
     c = [0, 0, 0, 0, 0, 0]
-    d = 0
+    d: int = 0
     stage_list = {0: a, 1: b, 2: c}  # Dict defining each stage's list
 
     ser = list(input("Enter the bomb's serial number: ").upper())
@@ -37,12 +37,15 @@ def main() -> None:
             print("Characters 3 and 6 should always (?) be numbers.")
         ser[i] = b_36.index(ser[i])  # Then translating the current SN character...
         d += ser[i]  # into base 36, while accumulating d with each one
-    a[0] = (ser[2] * 36 + ser[3]) % 365  # Characters 3 and 4
-    b[0] = (ser[4] * 36 + ser[5]) % 365  # Characters 5 and 6
-    c[0] = (ser[0] * 36 + ser[1]) % 365  # Characters 1 and 2
+    a[0] = int((ser[2] * 36 + ser[3]) % 365)  # Characters 3 and 4
+    b[0] = int((ser[4] * 36 + ser[5]) % 365)  # Characters 5 and 6
+    c[0] = int((ser[0] * 36 + ser[1]) % 365)  # Characters 1 and 2
+    print("Initial values are " + str(a[0]) + ", " + str(b[0]) + ", and " + str(c[0]))
+    print("The value of D (sum of chars) is " + str(d))  # Lines like these are to debug
 
     # Now the program has all required serial number data and can get rotations
-    for STAGE in range(0, 3):  # For each of the 3 stages of the mod...
+    STAGE = 0  # Keeps track of the module's stage
+    while STAGE < 3:  # For each of the 3 stages to do...
         for n in range(1, STAGE + 4):  # For each rotation...
             # Note on the +4: The first stage has 3 rotations, but that's STAGE = 0, so
             # 3 needs to be added, and the end of range is exclusive, so add 3+1, or 4.
@@ -54,7 +57,7 @@ def main() -> None:
                 rots_valid = validate_rots(rots)  # Method below main in this file
 
             if len(rots) == 1:  # If there's only 1 rotation, use it to calculate the next value
-                stage_list[STAGE][n] = mono[rots[0]][STAGE](stage_list[STAGE][n-1], d, n, a[n-1], b[n-1])
+                stage_list[STAGE][n] = mono[rots[0]][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
             elif len(rots) == 2:  # Otherwise, if there are 2 rotations, check the unused ones
                 axes = ["X", "Y", "Z", "U", "V", "W"]  # List of axes
                 func = ["X", "Y", "Z"]  # List of axes with functions
@@ -69,6 +72,8 @@ def main() -> None:
 
                 stage_list[STAGE][n] = poly[func[index]][STAGE](  # (it's unused in X, Y, and Z anyway)
                     rots[0], rots[1], None, stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
+                print(func[index])  # This and the below loop are both debug print statements for multi-rotations
+                for rot in rots: print(str(mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])))
             # End of double rotation calculation
             else:  # Otherwise, there must be 3 rotations, so check if they all have an axis from XYZ
                 # If that's the case, they all must map XYZ to UVW or vice versa, as all six axes are used once
@@ -80,10 +85,13 @@ def main() -> None:
                         break  # Maybe the world's smallest optimization effort
                 stage_list[STAGE][n] = poly[form][STAGE](  # Uses the result formula of the test
                     rots[0], rots[1], rots[2], stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
+                print(form)  # This and the below loop are both debug print statements for multi-rotations
+                for rot in rots: print(str(mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])))
             # End of triple (and all) rotation calculation
+            print("Value " + str(n) + " of stage " + str(STAGE + 1) + " is " + str(stage_list[STAGE][n]))
         # End of rotation (n) loop
         ans_num = stage_list[STAGE][STAGE + 3]  # The answer! (+3 similar to +4 in rotation loop)
-        # print("Stage " + str(STAGE + 1) + "'s answer is " + str(int(ans_num)) + "! Now to input it...")
+        print("Stage " + str(STAGE + 1) + "'s answer is " + str(int(ans_num)) + "! Now to input it...")
         print("Press the center button to reveal eight colors.")  # Prompt for color input
         if ans_num != 0:  # If the answer is zero, though, it doesn't matter, so skip.
             cols_valid = False  # Stores validity of the color list while prompting
@@ -92,14 +100,14 @@ def main() -> None:
                 cols = list(input("Enter them in CW order from North, without spaces: ").upper())
                 cols_valid = validate_cols(cols)  # Method below main in this file
             ans_seq = order(stage_cols[STAGE], cols)  # Reorders initial order
-            # print("The order goes " + str(ans_seq) + ", so press...")
+            print("The order goes " + str(ans_seq) + ", so press...")
             answer(ans_num, ans_seq)  # Gets the final answer!
         else:  # If the answer was 0, say to only press the center.
             print("The answer is 0, so just press the center button again!")
         if input("Enter N if a strike occurred, otherwise press enter: ").upper() == "N":
             print("[STRIKE] Try reading the rotations again.\n[STRIKE] Note: only the colors will change.")
-            STAGE -= 1  # If that wasn't correct, undo the increment of the stage...
-            # So this stage will be re-calculated
+            STAGE -= 1  # If that wasn't correct, undo the increment of the stage (below)...
+        STAGE += 1  # So this stage will be re-calculated only if it was wrong
     # End of stage loop and program (except for a solve message)
     print("[SOLVED] Congratulations on solving UltraStores! -mythers45#1807")
 

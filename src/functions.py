@@ -46,17 +46,17 @@ mono = {"XY": ((lambda x, d, n, a, b: bound(x + d)),
                (lambda x, d, n, a, b: bound(3 * d - x - a)),
                (lambda x, d, n, a, b: bound(4 * d - x - b - a))),
         "YW": ((lambda x, d, n, a, b: bound(2 * x + d - 35 * n)),
-               (lambda x, d, n, a, b: bound(2 * x + abs(a) - 12 * n * n)),
-               (lambda x, d, n, a, b: bound(2 * x + abs(b) + abs(a) - 5 * n * n * n))),
-        "ZW": ((lambda x, d, n, a, b: bound(x + (x % 6) * (x % 6) * (x % 6))),
-               (lambda x, d, n, a, b: bound(x + (a % 7) * (a % 7) * (a % 7))),
-               (lambda x, d, n, a, b: bound(x + (b % 6) * (b % 6) * (b % 6) + (a % 6) * (a % 6) * (a % 6)))),
+               (lambda x, d, n, a, b: bound(2 * x + abs(a) - 12 * pow(n, 2))),
+               (lambda x, d, n, a, b: bound(2 * x + abs(b) + abs(a) - 5 * pow(n, 3)))),
+        "ZW": ((lambda x, d, n, a, b: bound(x + pow((x % 6), 3))),
+               (lambda x, d, n, a, b: bound(x + pow((a % 7), 3))),
+               (lambda x, d, n, a, b: bound(x + pow((b % 6), 3) + pow((a % 6), 3)))),
         "XV": ((lambda x, d, n, a, b: bound(2 * (d - x))),
                (lambda x, d, n, a, b: bound(2 * x - 3 * (d - a))),
                (lambda x, d, n, a, b: bound(2 * x - 4 * (d - b)))),
-        "YV": ((lambda x, d, n, a, b: bound(x + (d % 6) * (d % 6) * (d % 6) - 35 * n)),
-               (lambda x, d, n, a, b: bound(x + (a % 7) * (a % 7) * (a % 7) - 12 * n * n)),
-               (lambda x, d, n, a, b: bound(x + (b % 8) * (b % 8) * (b % 8) - 5 * n * n * n))),
+        "YV": ((lambda x, d, n, a, b: bound(x + pow((d % 6), 3) - 35 * n)),
+               (lambda x, d, n, a, b: bound(x + pow((a % 7), 3) - 12 * pow(n, 2))),
+               (lambda x, d, n, a, b: bound(x + pow((b % 8), 3) - 5 * pow(n, 3)))),
         "ZV": ((lambda x, d, n, a, b: bound((x - x % 2) / 2 + d)),
                (lambda x, d, n, a, b: bound(x + (x - x % 2) / 2 - a)),
                (lambda x, d, n, a, b: bound((x - x % n) / n + 2 * b))),
@@ -91,17 +91,17 @@ mono = {"XY": ((lambda x, d, n, a, b: bound(x + d)),
                (lambda x, d, n, a, b: bound(3 * d + x - a)),
                (lambda x, d, n, a, b: bound(4 * d + x - b - a))),
         "WY": ((lambda x, d, n, a, b: bound(2 * x - d - 35 * n)),
-               (lambda x, d, n, a, b: bound(2 * x - abs(a) - 12 * n * n)),
-               (lambda x, d, n, a, b: bound(2 * x - abs(b) - abs(a) - 5 * n * n * n))),
-        "WZ": ((lambda x, d, n, a, b: bound(x - (x % 7) * (x % 7) * (x % 7))),
-               (lambda x, d, n, a, b: bound(x - (a % 6) * (a % 6) * (a % 6))),
-               (lambda x, d, n, a, b: bound(x - (b % 7) * (b % 7) * (b % 7) - (a % 7) * (a % 7) * (a % 7)))),
+               (lambda x, d, n, a, b: bound(2 * x - abs(a) - 12 * pow(n, 2))),
+               (lambda x, d, n, a, b: bound(2 * x - abs(b) - abs(a) - 5 * pow(n, 3)))),
+        "WZ": ((lambda x, d, n, a, b: bound(x - pow((x % 7), 3))),
+               (lambda x, d, n, a, b: bound(x - pow((a % 6), 3))),
+               (lambda x, d, n, a, b: bound(x - pow((b % 7), 3) - pow((a % 7), 3)))),
         "VX": ((lambda x, d, n, a, b: bound(2 * (d + x))),
                (lambda x, d, n, a, b: bound(2 * x - 3 * (d + a))),
                (lambda x, d, n, a, b: bound(2 * x - 4 * (d + b)))),
-        "VY": ((lambda x, d, n, a, b: bound(x - (d % 6) * (d % 6) * (d % 6) - 35 * n)),
-               (lambda x, d, n, a, b: bound(x - (a % 7) * (a % 7) * (a % 7) - 12 * n * n)),
-               (lambda x, d, n, a, b: bound(x - (b % 8) * (b % 8) * (b % 8) - 5 * n * n * n))),
+        "VY": ((lambda x, d, n, a, b: bound(x - pow((d % 6), 3) - 35 * n)),
+               (lambda x, d, n, a, b: bound(x - pow((a % 7), 3) - 12 * pow(n, 2))),
+               (lambda x, d, n, a, b: bound(x - pow((b % 8), 3) - 5 * pow(n, 3)))),
         "VZ": ((lambda x, d, n, a, b: bound((x - x % 2) / 2 - d)),
                (lambda x, d, n, a, b: bound(x + (x - x % 2) / 2 + a)),
                (lambda x, d, n, a, b: bound((x - x % n) / n - 2 * b))),
@@ -154,14 +154,14 @@ poly = {"X":  ((lambda r, s, t, x, d, n, a, b: bound(2*d-abs(mono[r][0](x, d, n,
                                                          mono[t][0](x, d, n, a, b))-2*d)),
                (lambda r, s, t, x, d, n, a, b: bound(mono[r][1](x, d, n, a, b)
                                                      + mono[s][1](x, d, n, a, b)
-                                                     + mono[t][1](x, d, n, a, b)-2*x)),
+                                                     + mono[t][1](x, d, n, a, b)-3*x)),
                (lambda r, s, t, x, d, n, a, b: bound(mono[r][2](x, d, n, a, b)
                                                      + mono[s][2](x, d, n, a, b)
                                                      + mono[t][2](x, d, n, a, b)-a-b-x))),
         "V":  ((lambda r, s, t, x, d, n, a, b: bound(min(mono[r][0](x, d, n, a, b),
                                                          mono[s][0](x, d, n, a, b),
                                                          mono[t][0](x, d, n, a, b))+2*d)),
-               (lambda r, s, t, x, d, n, a, b: bound(2*x-mono[r][1](x, d, n, a, b)
+               (lambda r, s, t, x, d, n, a, b: bound(3*x-mono[r][1](x, d, n, a, b)
                                                      - mono[s][1](x, d, n, a, b)
                                                      - mono[t][1](x, d, n, a, b))),
                (lambda r, s, t, x, d, n, a, b: bound(a+b+x-mono[r][2](x, d, n, a, b)
@@ -180,5 +180,5 @@ def bound(x: int) -> int:
     """
     y = x % 365  # Begin by taking x modulo 365 where the result is positive.
     if x < 0 < y:  # If x was negative, and y was not 0 (y can't be negative)...
-        return y - 365  # Subtract 365 from y, putting it to -364 at the lowest.
-    return y  # Otherwise, just return y (if y was 0, this line executes).
+        return int(y - 365)  # Subtract 365 from y, putting it to -364 at the lowest.
+    return int(y)  # Otherwise, just return y (if y was 0, this case holds, not the above).
