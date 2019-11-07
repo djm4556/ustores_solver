@@ -1,18 +1,16 @@
 """
-This file contains two dicts of tuples,
-with each tuple containing three lambdas.
-In addition, it has a basic tuple for base-36.
-For the first dict (mono, single rotations),
+This file contains one dict of lists to
+store color orders, two dicts of tuples
+with each tuple containing three lambdas,
+and finally a basic tuple for base-36.
+For the first tuple dict (mono, 1 rotation),
 the rotation of the 6D cube is the key,
 and the value tuple contains the functions
 for module stages 1, 2, and 3 in that order.
-The second dict (poly, multiple rotations)
+The second one (poly, multiple rotations)
 has similar values, but the keys have to
-be computed in solver.py based on which
-axes the rotations involve (those rotations
-are also passed as arguments for each of
-the lambdas, as they utilize the lambdas
-from the first dict to nest functions.
+be computed in solver.py and the functions
+begin relying on single rotation functions.
 A helper method is used to put all of the
 results between -364 and 364 inclusive.
 
@@ -22,6 +20,10 @@ results between -364 and 364 inclusive.
 b_36 = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B",
         "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
         "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z")
+
+stage_cols = {0: ["R", "G", "B", "C", "M", "Y"],
+              1: ["Y", "B", "M", "G", "R", "C"],
+              2: ["M", "C", "R", "Y", "G", "B"]}
 
 """
 MONO: Definitions of single (mono) rotation functions (5 args: x d n a b)

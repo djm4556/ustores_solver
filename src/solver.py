@@ -6,7 +6,8 @@ UltraStores (ktane.timwi.de/HTML/UltraStores.html)
 :author: mythers45#1807 (Discord username)
 """
 from sys import argv  # For interface customization?
-from src.functions import b_36, mono, poly  # Helper imports
+from src.functions import *  # Helper functions
+from src.colors import order  # Color order
 
 
 def main() -> None:
@@ -45,12 +46,12 @@ def main() -> None:
         for n in range(1, STAGE + 4):  # For each rotation...
             # Note on the +4: The first stage has 3 rotations, but that's STAGE = 0, so
             # 3 needs to be added, and the end of range is exclusive, so add 3+1, or 4.
-            valid = False  # Stores validity of a given stage's input
-            rots = []  # Variable to store list of sub-rotations
-            while not valid:  # Prompt until valid
+            rots_valid = False  # Stores validity of a this stage's input
+            rots = []  # Variable to store a list of sub-rotations
+            while not rots_valid:  # Prompt until valid
                 rots = input("Enter rotation number " + str(n) + " of stage " + str(STAGE + 1)
                              + ":\n(separate sub-rotations with spaces): ").upper().split(" ")
-                valid = validate_rots(rots)  # Gets a rotation and tests it for validity
+                rots_valid = validate_rots(rots)  # Method below main in this file
 
             if len(rots) == 1:  # If there's only 1 rotation, use it to calculate the next value
                 stage_list[STAGE][n] = mono[rots[0]][STAGE](stage_list[STAGE][n-1], d, n, a[n-1], b[n-1])
@@ -81,9 +82,16 @@ def main() -> None:
                     rots[0], rots[1], rots[2], stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
             # End of triple (and all) rotation calculation
         # End of rotation (n) loop
-        ans = stage_list[STAGE][STAGE + 3]  # The answer! (+3 similar to +4 in rotation loop)
-        print("Stage " + str(STAGE + 1) + "'s answer is " + str(ans) + "! Now to input it.")
-        print("Press the center button to enter input mode.")
+        ans_num = stage_list[STAGE][STAGE + 3]  # The answer! (+3 similar to +4 in rotation loop)
+        print("Stage " + str(STAGE + 1) + "'s answer is " + str(ans_num) + "! Now to input it...")
+        print("Press the center button to reveal eight colors.")  # Prompt for color input
+        cols_valid = False  # Stores validity of the color list while prompting
+        cols = []  # Variable to store a list of all eight colors
+        while not cols_valid:  # Prompt until valid
+            cols = list(input("Enter them in CW order from North, without spaces: ").upper())
+            cols_valid = validate_cols(cols)  # Method below main in this file
+        ans_seq = order(stage_cols[STAGE], cols)  # Reorders initial order
+        print("The order goes " + str(ans_seq) + ", so press...")
     # End of stage loop
 
 
@@ -96,23 +104,46 @@ def validate_rots(rots: list) -> bool:
     :return: The validity of the rotation by the above tests
     """
     valid = True  # Assume valid until tested
-    axes = []  # List for storing used axes (which should be unique)
     if not 1 <= len(rots) <= 3:  # If the rotation has 0 or 4+ sub-rotations...
         print("Invalid number of sub-rotations (should be 1, 2, or 3)")
-        return False  # It's invalid, and skip other tests.
+        return False  # It's invalid, and skip the other tests.
+    used = []  # List for storing used axes (which should be unique)
     for part in rots:  # Next, iterate through the sub-rotations...
         if part not in mono:  # If one's not in the dictionary, it's invalid...
-            print("Invalid sub-rotation " + part + " (should have 2 of X Y Z W V U)")
+            print("Invalid sub-rotation '" + part + "' (should have 2 of X Y Z W V U)")
             valid = False  # But keep checking other sub-rotations for validity.
         else:  # Otherwise, check for duplicate axes.
-            if part[0] in axes:  # If the first axis is already used...
-                print("Axis " + part[0] + " used multiple times (axes should be unique)")
+            if part[0] in used:  # If the first axis is already used...
+                print("Axis '" + part[0] + "' used multiple times (axes should be unique)")
                 valid = False  # The rotation is invalid.
-            if part[1] in axes:  # The same goes for the second axis,
-                print("Axis " + part[1] + " used multiple times (axes should be unique)")
+            if part[1] in used:  # The same goes for the second axis,
+                print("Axis '" + part[1] + "' used multiple times (axes should be unique)")
                 valid = False  # After checking if the axes were used before...
-            axes.extend(list(part))  # Add them to the list so they're marked as used next time.
+            used.extend(list(part))  # Add them to the list so they're marked as used next time.
     return valid  # Finally, return the validity (False if any tests failed, else True).
+
+
+def validate_cols(cols: list) -> bool:
+    """
+    Takes a list of colors and ensures they form a valid configuration of colors.
+    :param cols: The list of colors to validate (1 each of R G B C M Y W K)
+    :return: The validity of the list based on the above condition
+    """
+    if len(cols) != 8:  # If there aren't 8 colors...
+        print("Invalid number of colors (should be 8 letters, no spaces)")
+        return False  # It's invalid, and skip the other tests.
+    # These lists start with all 8 colors. all_cols doesn't change, as it's
+    # made for storing valid colors, while unused changes to detect duplicates.
+    all_cols = ["R", "G", "B", "C", "M", "Y", "W", "K"]
+    unused = all_cols.copy()  # Copy won't change original
+    for color in cols:  # Iterating through cols...
+        if color not in all_cols:  # If an invalid color was entered, don't remove.
+            print("Invalid color '" + color + "' (should be one of R G B C M Y W K)")
+        elif color not in unused:  # If a valid color was already removed, don't remove.
+            print("Color '" + color + "' used multiple times (colors should be unique)")
+        else:  # Otherwise, the color can be removed from the list of unused ones.
+            unused.remove(color)  # Above case checks for absence, stopping errors here
+    return len(unused) == 0  # If all eight colors removed successfully, the input is valid.
 
 
 if __name__ == '__main__':
