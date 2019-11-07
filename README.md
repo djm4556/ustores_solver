@@ -23,7 +23,7 @@ First, take note of the fact that this program has no case sensitivity.
 
 You will first be prompted for a six-character serial number that can be found on the side
 of the bomb. Enter it, and be careful not to mistype, as changing the serial number will
-require you to restart the program, losing any data you entered (if you did enter any).
+require you to restart the program, deleting any data you entered.
 
 After entering a valid serial number, the program will start asking for rotations, which
 must be entered in the order they occur. A pause denotes the end of the rotation sequence,
