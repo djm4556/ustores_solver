@@ -63,7 +63,10 @@ def main() -> None:
                 rots_valid = validate_rots(rots)  # Method below main in this file
 
             if len(rots) == 1:  # If there's only 1 rotation, use it to calculate the next value
-                stage_list[STAGE][n] = mono[rots[0]][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
+                if STAGE == 2 and rots[0] == "VZ":  # FIXME: Workaround to VZ stage 3 bug while it exists
+                    stage_list[STAGE][n] = mono[rots[0]][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[0])
+                else:  # FIXME: If the bug is patched, the else case is the intended behavior for all rotations
+                    stage_list[STAGE][n] = mono[rots[0]][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
             elif len(rots) == 2:  # Otherwise, if there are 2 rotations, check the unused ones
                 axes = ["X", "Y", "Z", "U", "V", "W"]  # List of axes
                 func = ["X", "Y", "Z"]  # List of axes with functions
@@ -77,12 +80,17 @@ def main() -> None:
                         index += 1  # Then calculate the next value without a 3rd rotation...
 
                 stage_list[STAGE][n] = poly[func[index]][STAGE](  # (it's unused in X, Y, and Z anyway)
-                    rots[0], rots[1], None, stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
+                    rots[0], rots[1], None, stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1], b[0])
+                # FIXME: To neutralize the VZ stage 3 bug, b[0] must be passed. After it's fixed, remove b[0].
                 if args.debug:  # If [multiple-rotation] debugging is enabled, begin with the function used...
                     msg = "Multiple rotation function used: " + func[index] + "\nSub-rotation evaluations:\n"
                     for rot in rots:  # And construct a debug message by appending various pieces to one string
-                        msg += (rot + " has a value of " + str(  # Calculates and appends each sub-rotation value
-                            mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])) + "\n")
+                        if rot == "VZ" and STAGE == 2:  # FIXME: Special case for appending VZ stage 3 in bug
+                            msg += (rot + " has a BUGGED value of " + str(  # (Uses b0 so value is printed as used)
+                                mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[0])) + "\n")
+                        else:  # FIXME: If the bug is patched, the else case is the intended way of appending
+                            msg += (rot + " has a value of " + str(  # Calculates and appends each sub-rotation value
+                                mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])) + "\n")
                     print(msg)  # After constructing the debug message, print it
                 # End of double rotation debug message if statement
             # End of double rotation calculation
@@ -95,7 +103,8 @@ def main() -> None:
                         form = "V"  # So use function V instead of W in calculating
                         break  # Maybe the world's smallest optimization effort
                 stage_list[STAGE][n] = poly[form][STAGE](  # Uses the result formula of the test
-                    rots[0], rots[1], rots[2], stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
+                    rots[0], rots[1], rots[2], stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1], b[0])
+                # FIXME: To neutralize the VZ stage 3 bug, b[0] must be passed. After it's fixed, remove b[0].
                 if args.debug:  # If [multiple-rotation] debugging is enabled, begin with the function used...
                     msg = "Multiple rotation function used: " + form + "\nSub-rotation evaluations:\n"
                     for rot in rots:  # And make a debug message by appending various pieces to a string
