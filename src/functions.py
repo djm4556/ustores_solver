@@ -104,7 +104,7 @@ mono = {"XY": ((lambda x, d, n, a, b: bound(x + d)),
                (lambda x, d, n, a, b: bound(x - pow((b % 8), 3) - 5 * pow(n, 3)))),
         "VZ": ((lambda x, d, n, a, b: bound((x - x % 2) / 2 - d)),
                (lambda x, d, n, a, b: bound(x + (x - x % 2) / 2 + a)),
-               (lambda x, d, n, a, b: bound((x - x % n) / n - 2 * b))),
+               (lambda x, d, n, a, b: bound((x - x % n) / n - 2 * b))),  # FIXME: Module-side bug with this function!
         "VW": ((lambda x, d, n, a, b: bound(5 * x + 3 * d)),
                (lambda x, d, n, a, b: bound(8 * x + 5 * d - 3 * a)),
                (lambda x, d, n, a, b: bound(13 * x + 8 * d - 5 * a + 3 * b))),

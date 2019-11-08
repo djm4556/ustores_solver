@@ -5,9 +5,14 @@ UltraStores (ktane.timwi.de/HTML/UltraStores.html)
 
 :author: mythers45#1807 (Discord username)
 """
-# from sys import argv  # For interface customization?
+import argparse  # For instant interface customization
 from src.functions import *  # Helper functions
 from src.colors import order  # Color order
+
+parser = argparse.ArgumentParser("Solves a KTANE UltraStores module")  # Argument parser
+parser.add_argument("-d", "--debug", action="store_true",  # With arguments
+                    help="Debug mode: prints debugging statements")
+args = parser.parse_args()  # Parses the arguments
 
 
 def main() -> None:
@@ -40,8 +45,9 @@ def main() -> None:
     a[0] = int((ser[2] * 36 + ser[3]) % 365)  # Characters 3 and 4
     b[0] = int((ser[4] * 36 + ser[5]) % 365)  # Characters 5 and 6
     c[0] = int((ser[0] * 36 + ser[1]) % 365)  # Characters 1 and 2
-    print("Initial values are " + str(a[0]) + ", " + str(b[0]) + ", and " + str(c[0]))
-    print("The value of D (sum of chars) is " + str(d))  # Lines like these are to debug
+    if args.debug:  # If [serial number] debugging is enabled, print the values...
+        print("Initial values are " + str(a[0]) + ", " + str(b[0]) + ", and " + str(c[0]))
+        print("The value of D (sum of chars) is " + str(d))  # derived from the serial number
 
     # Now the program has all required serial number data and can get rotations
     STAGE = 0  # Keeps track of the module's stage
@@ -72,8 +78,13 @@ def main() -> None:
 
                 stage_list[STAGE][n] = poly[func[index]][STAGE](  # (it's unused in X, Y, and Z anyway)
                     rots[0], rots[1], None, stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
-                print(func[index])  # This and the below loop are both debug print statements for multi-rotations
-                for rot in rots: print(str(mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])))
+                if args.debug:  # If [multiple-rotation] debugging is enabled, begin with the function used...
+                    msg = "Multiple rotation function used: " + func[index] + "\nSub-rotation evaluations:\n"
+                    for rot in rots:  # And construct a debug message by appending various pieces to one string
+                        msg += (rot + " has a value of " + str(  # Calculates and appends each sub-rotation value
+                            mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])) + "\n")
+                    print(msg)  # After constructing the debug message, print it
+                # End of double rotation debug message if statement
             # End of double rotation calculation
             else:  # Otherwise, there must be 3 rotations, so check if they all have an axis from XYZ
                 # If that's the case, they all must map XYZ to UVW or vice versa, as all six axes are used once
@@ -85,13 +96,20 @@ def main() -> None:
                         break  # Maybe the world's smallest optimization effort
                 stage_list[STAGE][n] = poly[form][STAGE](  # Uses the result formula of the test
                     rots[0], rots[1], rots[2], stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
-                print(form)  # This and the below loop are both debug print statements for multi-rotations
-                for rot in rots: print(str(mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])))
+                if args.debug:  # If [multiple-rotation] debugging is enabled, begin with the function used...
+                    msg = "Multiple rotation function used: " + form + "\nSub-rotation evaluations:\n"
+                    for rot in rots:  # And make a debug message by appending various pieces to a string
+                        msg += (rot + " has a value of " + str(  # Calculates and adds each sub-rotation value
+                            mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])) + "\n")
+                    print(msg)  # After constructing the debug message, print it
+                # End of triple rotation debug message if statement
             # End of triple (and all) rotation calculation
-            print("Value " + str(n) + " of stage " + str(STAGE + 1) + " is " + str(stage_list[STAGE][n]))
+            if args.debug:  # If [value-based] debugging is enabled, print each value
+                print("Value " + str(n) + " of stage " + str(STAGE + 1) + " is " + str(stage_list[STAGE][n]))
         # End of rotation (n) loop
         ans_num = stage_list[STAGE][STAGE + 3]  # The answer! (+3 similar to +4 in rotation loop)
-        print("Stage " + str(STAGE + 1) + "'s answer is " + str(int(ans_num)) + "! Now to input it...")
+        if args.debug:  # If [value-based] debugging is enabled, print the final value (decimal, not ternary)
+            print("Stage " + str(STAGE + 1) + "'s answer is " + str(int(ans_num)) + "! Now to input it...")
         print("Press the center button to reveal eight colors.")  # Prompt for color input
         if ans_num != 0:  # If the answer is zero, though, it doesn't matter, so skip.
             cols_valid = False  # Stores validity of the color list while prompting
@@ -99,8 +117,9 @@ def main() -> None:
             while not cols_valid:  # Prompt until valid
                 cols = list(input("Enter them in CW order from North, without spaces: ").upper())
                 cols_valid = validate_cols(cols)  # Method below main in this file
-            ans_seq = order(stage_cols[STAGE], cols)  # Reorders initial order
-            print("The order goes " + str(ans_seq) + ", so press...")
+            ans_seq = order(stage_cols[STAGE], cols, args.debug)  # Changes list order
+            if args.debug:  # If color-based debugging is allowed, print the ending order
+                print("The order list goes " + str(ans_seq) + ", so...")
             answer(ans_num, ans_seq)  # Gets the final answer!
         else:  # If the answer was 0, say to only press the center.
             print("The answer is 0, so just press the center button again!")
