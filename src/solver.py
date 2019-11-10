@@ -83,14 +83,14 @@ def main() -> None:
                     rots[0], rots[1], None, stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1], b[0])
                 # FIXME: To neutralize the VZ stage 3 bug, b[0] must be passed. After it's fixed, remove b[0].
                 if args.debug:  # If [multiple-rotation] debugging is enabled, begin with the function used...
-                    msg = "Multiple rotation function used: " + func[index] + "\nSub-rotation evaluations:\n"
+                    msg = "Multiple rotation function used: " + func[index] + "\nSub-rotation evaluations:"
                     for rot in rots:  # And construct a debug message by appending various pieces to one string
                         if rot == "VZ" and STAGE == 2:  # FIXME: Special case for appending VZ stage 3 in bug
-                            msg += (rot + " has a BUGGED value of " + str(  # (Uses b0 so value is printed as used)
-                                mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[0])) + "\n")
+                            msg += ("\n" + rot + " has a BUGGED value of " + str(  # (b0 so value is printed as used)
+                                mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[0])))
                         else:  # FIXME: If the bug is patched, the else case is the intended way of appending
-                            msg += (rot + " has a value of " + str(  # Calculates and appends each sub-rotation value
-                                mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])) + "\n")
+                            msg += ("\n" + rot + " has a value of " + str(  # Calculates and appends each used value
+                                mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])))
                     print(msg)  # After constructing the debug message, print it
                 # End of double rotation debug message if statement
             # End of double rotation calculation
@@ -106,10 +106,14 @@ def main() -> None:
                     rots[0], rots[1], rots[2], stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1], b[0])
                 # FIXME: To neutralize the VZ stage 3 bug, b[0] must be passed. After it's fixed, remove b[0].
                 if args.debug:  # If [multiple-rotation] debugging is enabled, begin with the function used...
-                    msg = "Multiple rotation function used: " + form + "\nSub-rotation evaluations:\n"
-                    for rot in rots:  # And make a debug message by appending various pieces to a string
-                        msg += (rot + " has a value of " + str(  # Calculates and adds each sub-rotation value
-                            mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])) + "\n")
+                    msg = "Multiple rotation function used: " + form + "\nSub-rotation evaluations:"
+                    for rot in rots:  # And construct a debug message by appending various pieces to one string
+                        if rot == "VZ" and STAGE == 2:  # FIXME: Special case for appending VZ stage 3 in bug
+                            msg += ("\n" + rot + " has a BUGGED value of " + str(  # (b0 so value is printed as used)
+                                mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[0])))
+                        else:  # FIXME: If the bug is patched, the else case is the intended way of appending
+                            msg += ("\n" + rot + " has a value of " + str(  # Calculates and appends each used value
+                                mono[rot][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])))
                     print(msg)  # After constructing the debug message, print it
                 # End of triple rotation debug message if statement
             # End of triple (and all) rotation calculation
@@ -124,7 +128,7 @@ def main() -> None:
             cols_valid = False  # Stores validity of the color list while prompting
             cols = []  # Variable to store a list of all eight colors
             while not cols_valid:  # Prompt until valid
-                cols = list(input("Enter them in CW order from North, without spaces: ").upper())
+                cols = list(input("Enter colors in CW order from North, without spaces: ").upper())
                 cols_valid = validate_cols(cols)  # Method below main in this file
             ans_seq = order(stage_cols[STAGE], cols, args.debug)  # Changes list order
             if args.debug:  # If color-based debugging is allowed, print the ending order

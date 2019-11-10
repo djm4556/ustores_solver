@@ -1,3 +1,10 @@
+# BUG WARNING! DISABLE ULTRASTORES IMMEDIATELY
+Due to module-side bugs beyond my control with no known cause, I cannot guarantee this tool
+will work. To make things worse, this means doing UltraStores without this tool can't be
+guaranteed to work either, even if you follow the manual perfectly. **Disable UltraStores
+and leave it off until the bugs are patched!** This section will be removed when all of
+the known module-side bugs are patched- then you can re-enable it.
+
 # About ustores_solver (UltraStores solver)
 Semi-automatic solver for this Keep Talking and Nobody Explodes modded module:
 https://ktane.timwi.de/HTML/UltraStores.html (Using rule seed 1, the default)
@@ -18,7 +25,7 @@ https://ktane.timwi.de/HTML/The%20Ultracube.html
 
 TL:DR The "bomb" is not real, and this _devil_ exists despite all reason, so I made this.
 
-# Usage of the UltraStores Solver
+# Basic Usage of the UltraStores Solver
 First, take note of the fact that this program has no case sensitivity.
 
 You will first be prompted for a six-character serial number that can be found on the side
@@ -67,7 +74,7 @@ the program is required to get to the color prompt. However, take careful note o
 *Before entering anything else, enter "N" when prompted instead of just pressing enter,
 so the program will reset that stage instead of advancing to the next one by default.*
 
-# Appendix: Colors and Letters
+# Appendix: Colors and Letters Used
 Red = R (primary)
 
 Green = G (primary)
