@@ -1,9 +1,10 @@
 # BUG WARNING! DISABLE ULTRASTORES IMMEDIATELY
-Due to module-side bugs beyond my control with no known cause, I cannot guarantee this tool
-will work. To make things worse, this means doing UltraStores without this tool can't be
-guaranteed to work either, even if you follow the manual perfectly. **Disable UltraStores
-and leave it off until the bugs are patched!** This section will be removed when all of
-the known module-side bugs are patched- then you can re-enable it.
+Due to module-side bugs, there is a slim chance the dual rotation (YU, VY) will appear.
+This rotation was supposed to be (YU, VX), but a typo caused it to become an invalid
+rotation that cannot be read or calculated based on the manual. **Disable UltraStores
+and leave it off until the bug is patched!** This section will be removed when this
+specific bug is patched- then you can re-enable it, but be aware that a known bug in the
+logging may cause YW to log wrong even if it's used as it should be in calculations.
 
 # About ustores_solver (UltraStores solver)
 Semi-automatic solver for this Keep Talking and Nobody Explodes modded module:

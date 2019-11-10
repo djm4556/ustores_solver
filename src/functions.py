@@ -104,7 +104,7 @@ mono = {"XY": ((lambda x, d, n, a, b: bound(x + d)),
                (lambda x, d, n, a, b: bound(x - pow((b % 8), 3) - 5 * pow(n, 3)))),
         "VZ": ((lambda x, d, n, a, b: bound((x - x % 2) / 2 - d)),
                (lambda x, d, n, a, b: bound(x + (x - x % 2) / 2 + a)),
-               (lambda x, d, n, a, b: bound((x - x % n) / n - 2 * b))),  # FIXME: Module-side bug with this function!
+               (lambda x, d, n, a, b: bound((x - x % n) / n - 2 * b))),
         "VW": ((lambda x, d, n, a, b: bound(5 * x + 3 * d)),
                (lambda x, d, n, a, b: bound(8 * x + 5 * d - 3 * a)),
                (lambda x, d, n, a, b: bound(13 * x + 8 * d - 5 * a + 3 * b))),
@@ -131,76 +131,42 @@ r is one of the two or three rotations in the multiple rotation
 s is another of the two or three rotations, like r (order doesn't matter!)
 t is only used if there are three rotations, where it's the third one of the trio
 """
-# FIXME: After the VZ stage 3 bug is fixed:
-#  -remove z and y as arguments from all lambdas
-#  -remove meta-lambda lines atop stage 3 lambdas
-#  -replace any unequal function calls with just b
-#  -remove 2 )s from the end of each stage 3 lambda
-poly = {"X":  ((lambda r, s, t, x, d, n, a, b, z: bound(2 * d - abs(mono[r][0](x, d, n, a, b)
-                                                                    - mono[s][0](x, d, n, a, b)))),
-               (lambda r, s, t, x, d, n, a, b, z: bound(3 * d - abs(mono[r][1](x, d, n, a, b)
-                                                                    + mono[s][1](x, d, n, a, b)))),
-               (lambda r, s, t, x, d, n, a, b, z: temp_vz3_check(r, s, t, x, d, n, a, b, z,
-               (lambda r, s, t, x, d, n, a, b, z, y: bound(4 * d - abs(mono[r][2](x, d, n, a, b))
-                                                           - abs(mono[s][2](x, d, n, a, b))))))),
-        "Y":  ((lambda r, s, t, x, d, n, a, b, z: bound(2 * d - mono[r][0](x, d, n, a, b)
-                                                        - mono[s][0](x, d, n, a, b))),
-               (lambda r, s, t, x, d, n, a, b, z: bound(2 * a - mono[r][1](x, d, n, a, b)
-                                                        - mono[s][1](x, d, n, a, b))),
-               (lambda r, s, t, x, d, n, a, b, z: temp_vz3_check(r, s, t, x, d, n, a, b, z,
-               (lambda r, s, t, x, d, n, a, b, z, y: bound(2 * match(b, z, y) - mono[r][2](x, d, n, a, b)
-                                                           - mono[s][2](x, d, n, a, b)))))),
-        "Z":  ((lambda r, s, t, x, d, n, a, b, z: bound(mono[r][0](x, d, n, a, b)
-                                                        + mono[s][0](x, d, n, a, b) - x)),
-               (lambda r, s, t, x, d, n, a, b, z: bound(mono[r][1](x, d, n, a, b)
-                                                        + mono[s][1](x, d, n, a, b) - x - a)),
-               (lambda r, s, t, x, d, n, a, b, z: temp_vz3_check(r, s, t, x, d, n, a, b, z,
-               (lambda r, s, t, x, d, n, a, b, z, y: bound(mono[r][2](x, d, n, a, b)
-                                                           + mono[s][2](x, d, n, a, b) - x - match(b, z, y) - a))))),
-        "W":  ((lambda r, s, t, x, d, n, a, b, z: bound(max(mono[r][0](x, d, n, a, b),
-                                                            mono[s][0](x, d, n, a, b),
-                                                            mono[t][0](x, d, n, a, b)) - 2 * d)),
-               (lambda r, s, t, x, d, n, a, b, z: bound(mono[r][1](x, d, n, a, b)
-                                                        + mono[s][1](x, d, n, a, b)
-                                                        + mono[t][1](x, d, n, a, b) - 3 * x)),
-               (lambda r, s, t, x, d, n, a, b, z: temp_vz3_check(r, s, t, x, d, n, a, b, z,
-               (lambda r, s, t, x, d, n, a, b, z, y: bound(mono[r][2](x, d, n, a, b)
-                                                           + mono[s][2](x, d, n, a, z)
-                                                           + mono[t][2](x, d, n, a, y) - a - match(b, z, y) - x))))),
-        "V":  ((lambda r, s, t, x, d, n, a, b, z: bound(min(mono[r][0](x, d, n, a, b),
-                                                            mono[s][0](x, d, n, a, b),
-                                                            mono[t][0](x, d, n, a, b)) + 2 * d)),
-               (lambda r, s, t, x, d, n, a, b, z: bound(3 * x-mono[r][1](x, d, n, a, b)
-                                                        - mono[s][1](x, d, n, a, b)
-                                                        - mono[t][1](x, d, n, a, b))),
-               (lambda r, s, t, x, d, n, a, b, z: temp_vz3_check(r, s, t, x, d, n, a, b, z,
-               (lambda r, s, t, x, d, n, a, b, z, y: bound(a + match(b, z, y) + x - mono[r][2](x, d, n, a, b)
-                                                           - mono[s][2](x, d, n, a, z)
-                                                           - mono[t][2](x, d, n, a, y))))))}
-
-
-# FIXME: This is a temporary function for finding a value equal to another (b_n-1), only needed to stop VZ stage 3
-def match(a: int, b: int, c: int) -> int:
-    if a == b:
-        return a  # or b
-    elif a == c:
-        return a  # or c
-    elif b == c:
-        return b  # or c
-    else:  # If all 3 are equal, any can be returned
-        print("DANGER: all three values unequal in match function. Exiting...")
-        exit(1)  # This is just a sanity check that temp_vz3_check uses at least 2 equal values for f
-
-
-# FIXME: This is a temporary function for detecting and offsetting VZ stage 3 in poly if it's a present rotation
-def temp_vz3_check(r: str, s: str, t: str, x: int, d: int, n: int, a: int, b: int, z: int, f) -> int:
-    if r == "VZ":  # If the first rotation is VZ, it uses b0
-        return f(r, s, t, x, d, n, a, z, b, b)
-    if s == "VZ":  # If the second rotation is VZ, it uses b0
-        return f(r, s, t, x, d, n, a, b, z, b)
-    if t == "VZ":  # If the third rotation is VZ, it uses b0
-        return f(r, s, t, x, d, n, a, b, b, z)
-    return f(r, s, t, x, d, n, a, b, b, b)  # Else, nothing uses b0
+poly = {"X": ((lambda r, s, t, x, d, n, a, b: bound(2 * d - abs(mono[r][0](x, d, n, a, b)
+                                                                - mono[s][0](x, d, n, a, b)))),
+              (lambda r, s, t, x, d, n, a, b: bound(3 * d - abs(mono[r][1](x, d, n, a, b)
+                                                                + mono[s][1](x, d, n, a, b)))),
+              (lambda r, s, t, x, d, n, a, b: bound(4 * d - abs(mono[r][2](x, d, n, a, b))
+                                                    - abs(mono[s][2](x, d, n, a, b))))),
+        "Y": ((lambda r, s, t, x, d, n, a, b: bound(2 * d - mono[r][0](x, d, n, a, b)
+                                                    - mono[s][0](x, d, n, a, b))),
+              (lambda r, s, t, x, d, n, a, b: bound(2 * a - mono[r][1](x, d, n, a, b)
+                                                    - mono[s][1](x, d, n, a, b))),
+              (lambda r, s, t, x, d, n, a, b: bound(2 * b - mono[r][2](x, d, n, a, b)
+                                                    - mono[s][2](x, d, n, a, b)))),
+        "Z": ((lambda r, s, t, x, d, n, a, b: bound(mono[r][0](x, d, n, a, b)
+                                                    + mono[s][0](x, d, n, a, b) - x)),
+              (lambda r, s, t, x, d, n, a, b: bound(mono[r][1](x, d, n, a, b)
+                                                    + mono[s][1](x, d, n, a, b) - x - a)),
+              (lambda r, s, t, x, d, n, a, b: bound(mono[r][2](x, d, n, a, b)
+                                                    + mono[s][2](x, d, n, a, b) - x - b - a))),
+        "W": ((lambda r, s, t, x, d, n, a, b: bound(max(mono[r][0](x, d, n, a, b),
+                                                        mono[s][0](x, d, n, a, b),
+                                                        mono[t][0](x, d, n, a, b)) - 2 * d)),
+              (lambda r, s, t, x, d, n, a, b: bound(mono[r][1](x, d, n, a, b)
+                                                    + mono[s][1](x, d, n, a, b)
+                                                    + mono[t][1](x, d, n, a, b) - 3 * x)),
+              (lambda r, s, t, x, d, n, a, b: bound(mono[r][2](x, d, n, a, b)
+                                                    + mono[s][2](x, d, n, a, b)
+                                                    + mono[t][2](x, d, n, a, b) - a - b - x))),
+        "V": ((lambda r, s, t, x, d, n, a, b: bound(min(mono[r][0](x, d, n, a, b),
+                                                        mono[s][0](x, d, n, a, b),
+                                                        mono[t][0](x, d, n, a, b)) + 2 * d)),
+              (lambda r, s, t, x, d, n, a, b: bound(3 * x - mono[r][1](x, d, n, a, b)
+                                                    - mono[s][1](x, d, n, a, b)
+                                                    - mono[t][1](x, d, n, a, b))),
+              (lambda r, s, t, x, d, n, a, b: bound(a + b + x - mono[r][2](x, d, n, a, b)
+                                                    - mono[s][2](x, d, n, a, b)
+                                                    - mono[t][2](x, d, n, a, b))))}
 
 
 def bound(x: int) -> int:
