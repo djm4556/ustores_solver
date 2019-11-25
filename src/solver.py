@@ -64,7 +64,8 @@ def main() -> None:
 
             if len(rots) == 1:  # If there's only 1 rotation, use it to calculate the next value
                 stage_list[STAGE][n] = mono[rots[0]][STAGE](stage_list[STAGE][n - 1], d, n, a[n - 1], b[n - 1])
-                if rots[0] == "YW" and STAGE == 2:  # FIXME: Module-side logging error warning for this function
+                if rots[0] == "YW" and STAGE == 2 and bound(stage_list[STAGE][n] + 7300) != stage_list[STAGE][n]:
+                    # FIXME: Module-side logging (not computation) error warning for this function (YW on stage 3)
                     print("This value will be used correctly (" + str(stage_list[STAGE][n])  # +365*20, then re-bound
                           + ")\nHowever, a bug will make it log as " + str(bound(stage_list[STAGE][n] + 7300)))
             elif len(rots) == 2:  # Otherwise, if there are 2 rotations, check the unused ones
