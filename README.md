@@ -1,20 +1,5 @@
-# BUG WARNING! DISABLE ULTRASTORES IMMEDIATELY
-Due to module-side bugs, there is a slim chance the dual rotation (YU, VY) will appear.
-This rotation was supposed to be (YU, VX), but a typo caused it to become an invalid
-rotation that cannot be read or calculated based on the manual. **Disable UltraStores
-and leave it off until the bug is patched!** This section will be removed when this
-specific bug is patched- then you can re-enable it, but be aware that a known bug in the
-logging may cause YW to log wrong even if it's used as it should be in calculations.
-
-Also, a bug in the VU function for stage 3 causes the value's mathematical logging to show
-the correct math equation, but the module will use a different value, which is logged after
-the equals sign in the equation showing how the module got to that answer. Just like the
-YW logging-only bug, this causes math to seemingly be wrong, but this time the module uses
-the wrong value! Furthermore, it seems updates to this module have ended, so I won't be
-implementing another temporary workaround that requires a lot of work and restructuring of
-code, that only serves to pass a value not normally needed anywhere to everything, just in
-case one specific function needs it. (If there is popular demand, I'll consider it, but
-still, this module is horribly bugged.)
+# BUG REPORT: 0
+This section stores known bugs if there are any. Luckily, there are none- it's all patched!
 
 # About ustores_solver (UltraStores solver)
 Semi-automatic solver for this Keep Talking and Nobody Explodes modded module:
