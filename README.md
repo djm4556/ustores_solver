@@ -1,3 +1,5 @@
+[![Run on Repl.it](https://repl.it/badge/github/djm4556/ustores_solver)](https://repl.it/github/djm4556/ustores_solver)
+
 # BUG REPORT: 0
 This section stores known bugs if there are any. Luckily, there are none- it's all patched!
 
