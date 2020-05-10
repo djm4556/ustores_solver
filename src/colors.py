@@ -26,7 +26,8 @@ def order(stage_cols: list, cols: list, debug: bool) -> list:
     :param debug: Debug mode, which prints debug statements
     :return: The initial list, re-ordered by various rules
     """
-    print("Initial color list: " + str(stage_cols))
+    if debug: # Only print initial list if debugging
+        print("Initial color list: " + str(stage_cols))
     if cols[0] == "W":  # If top is white, reverse the sequence.
         stage_cols.reverse()
         if debug:
