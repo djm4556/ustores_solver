@@ -124,7 +124,8 @@ def main() -> None:
         else:  # If the answer was 0, say to only press the center.
             print("The answer is 0, so just press the center button again!")
         if input("Enter N if a strike occurred, otherwise press enter: ").upper() == "N":
-            print("[STRIKE] Try reading the rotations again.\n[STRIKE] Note: only the colors will change.")
+            print("[STRIKE] Try reading the rotations again.\n[STRIKE] Note: only the colors will change,\n"
+                 + "and you may have to re-light the white button.") # Clarified to avoid ambiguity
             STAGE -= 1  # If that wasn't correct, undo the increment of the stage (below)...
         STAGE += 1  # So this stage will be re-calculated only if it was wrong
     # End of stage loop and program (except for a solve message)
