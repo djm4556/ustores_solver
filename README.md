@@ -70,7 +70,8 @@ different colors. Re-reading the rotations is recommended, and re-inputting them
 the program is required to get to the color prompt. However, take careful note of this:
 
 *Before entering anything else, enter "N" when prompted instead of just pressing enter,
-so the program will reset that stage instead of advancing to the next one by default.*
+so the program will reset that stage instead of advancing to the next one by default.
+Also, the program assumes your presses begin with the white button lit (press to light).*
 
 # Appendix: Colors and Letters Used
 Red = R (primary)
